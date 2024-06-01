@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>p5.glitch-instance</title>
+	<meta charset="utf-8">
+	<!-- Compiled w/ P5LIVE, http://github.com/ffd8/p5live -->
+	<!-- SOURCE: https://github.com/ffd8/p5.glitch/blob/master/examples/web/includes/libs/p5.glitch.js -->
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.3.0/lib/p5.min.js"></script>
+	<style type="text/css">
+
+		* {
+			margin: 0;
+		}
+		body{
+	    overflow: hidden;
+    background: #8600c8;
+    cursor: crosshair;
+    width: 98Vw;
+    height: 98vh;
+    padding: 1vw;
+
+		}
+		.p5sketch{
+			box-sizing: border-box;
+	width: 95vw;
+	height: 95vh;
+			border:1px solid #fff;
+
+		}
+	</style>
+<script type="text/javascript" src="libs/p5.glitch.js"></script>
+
+<script type="text/javascript">
+	// p5.glitch-instance
+	// cc teddavis.org 2021
+
+	let id = 0;
+	let src = 'images/easyy.png';
+
+	function buildSketch(elm, type){
+		let parent = document.getElementById(elm);
+		new p5( function(sketch){
+			sketch.glitch;
+
+			sketch.setup = () => {
+				let cvn = sketch.createCanvas(parent.offsetWidth-2, parent.offsetHeight-2);
+				sketch.glitch = new Glitch(sketch);
+				sketch.glitch.loadType(type);
+				sketch.glitch.loadQuality(1.0);
+				sketch.glitch.loadImage(src, function(){
+					sketch.glitched();
+				});
+				cvn.mousePressed(sketch.glitched);
+				sketch.glitch.errors(false);
+				sketch.disableFriendlyErrors = true;
+				sketch.imageMode(sketch.CENTER);
+				sketch.background(0, 0, 255);
+				sketch.frameCount = sketch.floor(sketch.random(9999));
+				sketch.rot = 0;
+			};
+
+			sketch.draw = () => {
+				sketch.x = sketch.width - sketch.frameCount * 2 % sketch.width;
+				sketch.y = sketch.height / 2 + sketch.sin(sketch.frameCount * 0.05) * sketch.height/4;
+				sketch.translate(sketch.x, sketch.y);
+				sketch.rotate(-sketch.radians(sketch.cos(sketch.frameCount*.05))*5);
+				sketch.image(sketch.glitch.image, 0, 0);
+			}
+
+			sketch.glitched = () => {
+				sketch.glitch.resetBytes();
+				sketch.glitch.randomBytes(15); // randomize 10 bytes
+				sketch.glitch.buildImage();
+			}
+		}, parent);
+
+		id++;
+	}
+
+</script>
+
+</head>
+<body>
+	<div id="sketch1" class="p5sketch"></div>
+	<!-- <div id="sketch2" class="p5sketch"></div>
+	<div id="sketch3" class="p5sketch"></div> -->
+
+	<script>
+		buildSketch('sketch1', 'jpg')
+		buildSketch('sketch2', 'png')
+		buildSketch('sketch3', 'webp')
+	</script>
+</body>
+</html>
